@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block title %}Личный кабинет{% endblock %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto bg-white rounded-2xl shadow p-8">
+  <h2 class="text-2xl font-bold mb-6 text-center">Личный кабинет</h2>
+
+  <div class="space-y-4">
+    <div>
+      <span class="text-gray-500">Имя:</span>
+      <span class="font-medium">{{ user.get_full_name }}</span>
+    </div>
+
+    <div>
+      <span class="text-gray-500">Роль:</span>
+      <span class="font-medium">{{ user.get_role_display }}</span>
+    </div>
+
+    <div>
+      <span class="text-gray-500">Имя пользователя:</span>
+      <span class="font-medium">{{ user.username }}</span>
+    </div>
+
+    <div>
+      <span class="text-gray-500">Email:</span>
+      <span class="font-medium">{{ user.email }}</span>
+    </div>
+
+    {% if employee %}
+      <div>
+        <span class="text-gray-500">Дата рождения:</span>
+        <span class="font-medium">{{ employee.birth_date|date:"d.m.Y" }}</span>
+      </div>
+      <div>
+        <span class="text-gray-500">Город:</span>
+        <span class="font-medium">{{ employee.city }}</span>
+      </div>
+      <div>
+        <span class="text-gray-500">Должность:</span>
+        <span class="font-medium">{{ employee.position }}</span>
+      </div>
+    {% else %}
+      <div class="text-gray-400 italic">Информация о сотруднике не указана</div>
+    {% endif %}
+    <a href="{% url 'users:edit_profile' %}" class="text-blue-500 hover:underline">Редактировать профиль</a>
+  </div>
+</div>
+{% endblock %}
