@@ -43,6 +43,7 @@
     {% else %}
       <div class="text-gray-400 italic">Информация о сотруднике не указана</div>
     {% endif %}
+    <a href="{% url 'users:edit_profile' %}" class="text-blue-500 hover:underline">Редактировать профиль</a>
   </div>
 </div>
 {% endblock %}
