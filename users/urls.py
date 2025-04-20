@@ -9,6 +9,5 @@ app_name = "users"
 urlpatterns = [
     path("profile/", profile_view, name="profile"),
     path("profile/edit/", views.edit_profile, name="edit_profile"),
-    path("login/", custom_login_view, name="login"),
     path("logout/", LogoutView.as_view(next_page="/login"), name="logout"),
 ]

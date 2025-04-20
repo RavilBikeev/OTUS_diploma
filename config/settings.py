@@ -129,5 +129,6 @@ MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
 
 # Login settings
-LOGIN_URL = "login"
-LOGIN_REDIRECT_URL = "news"
+LOGIN_URL = "users:login"
+LOGIN_REDIRECT_URL = "/news/"
+LOGOUT_REDIRECT_URL = "users:login"
