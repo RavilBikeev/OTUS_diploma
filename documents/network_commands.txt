@@ -1,0 +1,24 @@
+____________________
+	
+windows:
+
+netsh routing ip nat show interface
+
+____________________
+
+linux:
+	
+ip rule
+iptables -t nat -L -n
+iptables -t mangle -L -n
+iptables --line-numbers -L -v -n
+iptables-save
+
+Правила:
+iptables -A OUTPUT -d 10.15.9.110 -j DROP - Добавить дроп правило
+iptables -D OUTPUT -d 10.15.9.110 -j DROP - Удалить дроп правило
+iptables --line-numbers -L -v -n - Посмотреть все правила
+
+DELETE TABLE RULE
+ip rule del table 100
+
