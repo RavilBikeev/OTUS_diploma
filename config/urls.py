@@ -3,9 +3,11 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib.auth.views import LogoutView
+from django.shortcuts import redirect
 
 
 urlpatterns = [
+    path("", lambda request: redirect("news:news_list", permanent=False)),
     path("admin/", admin.site.urls),
     path("news/", include("news.urls")),
     path("documents/", include("documents.urls")),
