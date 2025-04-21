@@ -4,6 +4,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib.auth.views import LogoutView
 from django.shortcuts import redirect
+from users.views import custom_login_view
 
 
 urlpatterns = [
@@ -14,6 +15,7 @@ urlpatterns = [
     path("", include("users.urls")),
     path("users/", include("users.urls")),
     path("logout/", LogoutView.as_view(next_page="/login"), name="logout"),
+    path("login/", custom_login_view, name="login"),
 ]
 
 if settings.DEBUG:
