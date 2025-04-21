@@ -7,7 +7,7 @@ from django.shortcuts import redirect
 
 
 urlpatterns = [
-    path("", lambda request: redirect("news:news_list", permanent=False)),
+    path("", lambda request: redirect("news:list", permanent=False)),
     path("admin/", admin.site.urls),
     path("news/", include("news.urls")),
     path("documents/", include("documents.urls")),
