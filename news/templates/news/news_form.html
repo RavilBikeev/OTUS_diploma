@@ -1,9 +1,43 @@
 {% extends "base.html" %}
+{% load widget_tweaks %}  {# Для стилизации полей #}
+
 {% block content %}
-  <h2 class="text-xl font-bold mb-4">Редактировать новость</h2>
-  <form method="post" enctype="multipart/form-data">
+<div class="max-w-2xl mx-auto px-6 py-8 bg-white rounded-2xl shadow">
+  <h2 class="text-2xl font-bold text-gray-800 mb-6">✏️ Редактировать новость</h2>
+
+  <form method="post" enctype="multipart/form-data" class="space-y-6">
     {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded">Сохранить</button>
+
+    <div>
+      <label for="{{ form.title.id_for_label }}" class="block font-semibold mb-1">Заголовок</label>
+      {{ form.title|add_class:"w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" }}
+    </div>
+
+    <div>
+      <label for="{{ form.content.id_for_label }}" class="block font-semibold mb-1">Содержимое</label>
+      {{ form.content|add_class:"w-full border border-gray-300 rounded px-4 py-2 min-h-[120px] focus:outline-none focus:ring-2 focus:ring-blue-500" }}
+    </div>
+
+    <div>
+      <label for="{{ form.author.id_for_label }}" class="block font-semibold mb-1">Автор</label>
+      {{ form.author|add_class:"w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" }}
+    </div>
+
+    <div class="flex items-center space-x-2">
+      {{ form.is_published }}
+      <label for="{{ form.is_published.id_for_label }}" class="font-medium">Опубликовано</label>
+    </div>
+
+    {% if form.image %}
+    <div>
+      <label for="{{ form.image.id_for_label }}" class="block font-semibold mb-1">Изображение</label>
+      {{ form.image|add_class:"block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100" }}
+    </div>
+    {% endif %}
+
+    <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700">
+      💾 Сохранить
+    </button>
   </form>
+</div>
 {% endblock %}

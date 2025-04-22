@@ -33,6 +33,7 @@ INSTALLED_APPS = [
     "users",
     "news",
     "documents",
+    "widget_tweaks",
 ]
 
 MIDDLEWARE = [
