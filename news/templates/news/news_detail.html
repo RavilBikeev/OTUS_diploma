@@ -16,6 +16,14 @@
   <div class="prose max-w-none mb-8">
     {{ news.content|linebreaks }}
   </div>
+  {% if news.tags.exists %}
+    <div class="mt-4">
+      <span class="text-gray-600 font-medium">Теги:</span>
+      {% for tag in news.tags.all %}
+        <span class="inline-block bg-gray-100 text-gray-800 text-sm px-2 py-1 rounded-full mr-2">{{ tag.name }}</span>
+      {% endfor %}
+    </div>
+  {% endif %}
 
   <hr class="my-6">
 

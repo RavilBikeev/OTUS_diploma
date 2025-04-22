@@ -1,5 +1,10 @@
 {% extends "base.html" %}
 {% load widget_tweaks %}  {# Для стилизации полей #}
+{% load static %}
+
+{% block extrahead %}
+  {{ form.media }}
+{% endblock %}
 
 {% block content %}
 <div class="max-w-2xl mx-auto px-6 py-8 bg-white rounded-2xl shadow">
@@ -34,7 +39,10 @@
       {{ form.image|add_class:"block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100" }}
     </div>
     {% endif %}
-
+    <div>
+      <label for="{{ form.tags.id_for_label }}" class="block text-sm font-medium text-gray-700">Теги</label>
+      {{ form.tags }}
+    </div>
     <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700">
       💾 Сохранить
     </button>

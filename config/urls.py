@@ -16,6 +16,7 @@ urlpatterns = [
     path("users/", include("users.urls")),
     path("logout/", LogoutView.as_view(next_page="/login"), name="logout"),
     path("login/", custom_login_view, name="login"),
+    path("select2/", include("django_select2.urls")),
 ]
 
 if settings.DEBUG:
