@@ -10,4 +10,5 @@ urlpatterns = [
     path("create/", views.create_news, name="create"),
     path("<int:pk>/edit/", views.edit_news, name="edit"),
     path("<int:pk>/", NewsDetailView.as_view(), name="detail"),
+    path("<int:pk>/like/", views.like_news, name="like_news"),
 ]

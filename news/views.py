@@ -1,7 +1,9 @@
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.views.generic import DetailView
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import News
+from django.http import JsonResponse
+from django.views.decorators.http import require_POST
+from .models import News, Like
 from .forms import CommentForm, NewsForm
 
 
@@ -42,6 +44,19 @@ def edit_news(request, pk):
     return render(request, "news/news_form.html", {"form": form, "edit": True})
 
 
+@login_required
+@require_POST
+def like_news(request, pk):
+    news = News.objects.get(pk=pk)
+    like, created = Like.objects.get_or_create(user=request.user, news=news)
+    if not created:
+        like.delete()
+        liked = False
+    else:
+        liked = True
+    return JsonResponse({"liked": liked, "likes_count": news.likes.count()})
+
+
 class NewsDetailView(DetailView):
     model = News
     template_name = "news/news_detail.html"
@@ -52,6 +67,9 @@ class NewsDetailView(DetailView):
         context["form"] = CommentForm()
         context["comments"] = self.object.comments.select_related("author").order_by(
             "-created_at"
+        )
+        context["liked_user_ids"] = set(
+            self.object.likes.values_list("user_id", flat=True)
         )
         return context
 

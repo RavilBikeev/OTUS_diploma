@@ -29,9 +29,13 @@ class News(models.Model):
 class Like(models.Model):
     news = models.ForeignKey(News, on_delete=models.CASCADE, related_name="likes")
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         unique_together = ("news", "user")
+
+    def __str__(self):
+        return f"{self.user} ❤️ {self.news}"
 
 
 class Comment(models.Model):
