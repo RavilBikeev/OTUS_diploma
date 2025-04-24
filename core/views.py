@@ -19,15 +19,12 @@ class EmployeeListView(ListView):
                 )
             )
         )
-
         department = self.request.GET.get("department")
         if department:
             queryset = queryset.filter(department=department)
-
         search_query = self.request.GET.get("q")
         if search_query:
             queryset = queryset.filter(full_name__icontains=search_query)
-
         return queryset
 
     def get_context_data(self, **kwargs):
