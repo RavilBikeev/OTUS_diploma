@@ -62,6 +62,13 @@ class NewsDetailView(DetailView):
     template_name = "news/news_detail.html"
     context_object_name = "news"
 
+    def get_queryset(self):
+        queryset = News.objects.all().order_by("-created_at")
+        tag_id = self.request.GET.get("tag")
+        if tag_id:
+            queryset = queryset.filter(tags__id=tag_id)
+        return queryset
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["form"] = CommentForm()
@@ -71,6 +78,8 @@ class NewsDetailView(DetailView):
         context["liked_user_ids"] = set(
             self.object.likes.values_list("user_id", flat=True)
         )
+        context["tags"] = Tag.objects.all()
+        context["current_tag_id"] = self.request.GET.get("tag")
         return context
 
     def post(self, request, *args, **kwargs):

@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mx-auto px-4 py-8 grid grid-cols-1 md:grid-cols-4 gap-6">
+  <!-- Фильтр -->
+  <div class="md:col-span-1">
+    <div class="bg-white rounded-2xl shadow p-4">
+      <h2 class="text-lg font-semibold mb-4">Отделы</h2>
+      <ul class="space-y-2">
+        <li><a href="{% url 'employees:list' %}" class="text-blue-600 hover:underline {% if not selected_department %}font-bold{% endif %}">Все</a></li>
+        {% for dept in departments %}
+          <li>
+            <a href="?department={{ dept.id }}" class="text-blue-600 hover:underline {% if selected_department.id == dept.id %}font-bold{% endif %}">
+              {{ dept.name }}
+            </a>
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+
+<div class="container mx-auto px-4 py-8">
+  <h1 class="text-3xl font-bold text-gray-800 mb-6">Сотрудники</h1>
+  <form method="get" action="" class="mb-3">
+    <input type="text" name="q" placeholder="Поиск по имени" value="{{ search_query }}" />
+    <button type="submit">🔍</button>
+
+    {# если выбран отдел, сохраняем его в скрытом поле #}
+    {% if request.GET.department %}
+      <input type="hidden" name="department" value="{{ request.GET.department }}">
+    {% endif %}
+  </form>
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    {% for employee in employees %}
+      <div class="bg-white rounded-2xl shadow p-6">
+        {% if employee.photo %}
+          <img src="{{ employee.photo.url }}" alt="Фото" class="w-24 h-24 rounded-full mb-4 mx-auto">
+        {% endif %}
+        <h2 class="text-xl font-semibold text-center text-blue-700">{{ employee.user.get_full_name }}</h2>
+        <p class="text-center text-gray-600">{{ employee.position }} | {{ employee.department }}</p>
+        <p class="text-center text-gray-500 mt-2">В компании {{ employee.days_in_company_value.days }} дней</p>
+      </div>
+    {% empty %}
+      <p class="text-gray-600">Нет сотрудников.</p>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

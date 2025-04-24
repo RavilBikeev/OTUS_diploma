@@ -1,6 +1,20 @@
 {% extends "base.html" %}
 
 {% block content %}
+<div class="tag-filter">
+  <form method="get">
+    <label for="tag-select">Фильтр по тегу:</label>
+    <select name="tag" id="tag-select" onchange="this.form.submit()">
+      <option value="">-- Все теги --</option>
+      {% for tag in tags %}
+        <option value="{{ tag.id }}" {% if tag.id|stringformat:"s" == current_tag_id %}selected{% endif %}>
+          {{ tag.name }}
+        </option>
+      {% endfor %}
+    </select>
+  </form>
+</div>
+
 <div class="max-w-5xl mx-auto py-8">
   <h1 class="text-2xl font-bold mb-6">Новости</h1>
 
