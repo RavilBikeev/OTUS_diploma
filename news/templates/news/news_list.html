@@ -1,65 +1,82 @@
 {% extends "base.html" %}
-
+{% load static %}
 {% block content %}
-<div class="tag-filter">
-  <form method="get">
-    <label for="tag-select">Фильтр по тегу:</label>
-    <select name="tag" id="tag-select" onchange="this.form.submit()">
-      <option value="">-- Все теги --</option>
+<div class="flex flex-col lg:flex-row gap-8 p-6">
+
+  <!-- Левая панель с тегами -->
+  <div class="lg:w-1/4 w-full bg-white p-6 rounded-2xl shadow">
+    <h2 class="text-xl font-semibold mb-4">Теги</h2>
+    <div class="flex flex-wrap gap-2">
+      <a href="{% url 'news:list' %}"
+         class="px-3 py-1 rounded-full text-sm border {% if not current_tag_id %}bg-blue-100 text-blue-700 border-blue-300{% else %}bg-gray-100 text-gray-700 border-gray-300 hover:bg-gray-200{% endif %}">
+         Все теги
+      </a>
       {% for tag in tags %}
-        <option value="{{ tag.id }}" {% if tag.id|stringformat:"s" == current_tag_id %}selected{% endif %}>
-          {{ tag.name }}
-        </option>
+        <a href="?tag={{ tag.id }}"
+           class="px-3 py-1 rounded-full text-sm border {% if current_tag_id == tag.id|stringformat:'s' %}bg-blue-100 text-blue-700 border-blue-300{% else %}bg-gray-100 text-gray-700 border-gray-300 hover:bg-gray-200{% endif %}">
+           {{ tag.name }}
+        </a>
       {% endfor %}
-    </select>
-  </form>
-</div>
+    </div>
+  </div>
 
-<div class="max-w-5xl mx-auto py-8">
-  <h1 class="text-2xl font-bold mb-6">Новости</h1>
+  <!-- Основная часть с новостями -->
+  <div class="lg:w-3/4 w-full">
+    <div class="flex justify-between items-center mb-6">
+      <h1 class="text-3xl font-bold">Новости</h1>
+      {% if user.is_authenticated and user.role in "admin hr manager" %}
+        <a href="{% url 'news:create' %}" class="flex items-center gap-1 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm shadow">
+          <span>➕</span> Добавить новость
+        </a>
+      {% endif %}
+    </div>
 
-  {% if user.is_authenticated and user.role in "admin hr manager" %}
-    <a href="{% url 'news:create' %}" class="inline-block bg-white  px-4 py-2 rounded hover:bg-green-700 mb-3">
-      ➕ Добавить новость
-    </a>
-  {% endif %}
+    <!-- Сетка карточек -->
+    <div class="grid md:grid-cols-2 gap-6">
+      {% for news in news_list %}
+        <div class="bg-white p-6 rounded-2xl shadow flex flex-col justify-between h-full">
+          <div>
+            <h2 class="text-xl font-semibold text-blue-700 hover:underline">
+              <a href="{% url 'news:detail' news.pk %}">{{ news.title }}</a>
+            </h2>
+            <p class="text-sm text-gray-500 mt-1">{{ news.created_at|date:"d.m.Y H:i" }} — {{ news.author.employee.department.name|default:"" }}</p>
+            <p class="mt-3 text-gray-800">{{ news.content|truncatewords:20 }}</p>
+            <!-- Теги -->
+            <div class="mt-4 flex flex-wrap gap-2">
+              {% for tag in news.tags.all %}
+                <span class="px-2 py-1 rounded-full text-xs bg-blue-100 text-blue-700 border border-blue-300">{{ tag.name }}</span>
+              {% endfor %}
+            </div>
+          </div>
+          <div class="mt-4 flex justify-between items-center text-sm text-gray-600">
+            <!-- Лайки -->
+            <form method="post" action="{% url 'news:like_news' news.pk %}" class="like-form flex items-center gap-1" data-news-id="{{ news.pk }}">
+              {% csrf_token %}
+              <button type="submit" class="flex items-center gap-1 text-red-500 hover:text-red-600">
+                ❤️
+                <span class="like-count">{{ news.likes.count }}</span>
+              </button>
+            </form>
 
-  <div class="flex flex-col gap-6">
-    {% for news in news_items %}
-      <div class="bg-white rounded-2xl shadow p-6 hover:shadow-lg transition">
-        <h2 class="text-2xl font-semibold text-blue-700 mb-2">
-          <a href="{% url 'news:detail' news.pk %}" class="hover:underline">
-            {{ news.title }}
-          </a>
-        </h2>
-        <p class="text-gray-600 text-sm mb-2">
-          {{ news.created_at|date:"d.m.Y H:i" }}
-          {% if news.author %} — {{ news.author.username }}{% endif %}
-        </p>
-        <p class="text-gray-800 mb-4">{{ news.content|truncatewords:35 }}</p>
+            <!-- Комментарии -->
+            <div class="flex items-center gap-1 text-gray-500">
+              💬
+              <span>{{ news.comments.count }}</span>
+            </div>
 
-        {% if news.tags.all %}
-        <div class="mb-4 flex flex-wrap gap-2">
-          {% for tag in news.tags.all %}
-            <span class="bg-blue-100 text-blue-700 text-xs font-semibold px-2 py-1 rounded">{{ tag.name }}</span>
-          {% endfor %}
+            <!-- Читать далее и редактировать -->
+            <div class="flex items-center gap-3">
+              <a href="{% url 'news:detail' news.pk %}" class="text-blue-600 hover:underline">Читать далее</a>
+              {% if user.is_authenticated and user.role in "admin hr manager" %}
+                <a href="{% url 'news:edit' news.pk %}" class="text-gray-400 hover:text-gray-600">✏️</a>
+              {% endif %}
+            </div>
+          </div>
         </div>
-        {% endif %}
-
-        <div class="flex justify-between items-center">
-          <a href="{% url 'news:detail' news.pk %}" class="text-blue-500 hover:underline font-medium">
-            Читать далее
-          </a>
-          {% if user.is_authenticated and user.role in "admin hr manager" %}
-            <a href="{% url 'news:edit' news.pk %}" class="text-blue-600 hover:underline text-sm">
-              ✏️ Редактировать
-            </a>
-          {% endif %}
-        </div>
-      </div>
-    {% empty %}
-      <p class="text-gray-600">Нет опубликованных новостей.</p>
-    {% endfor %}
+      {% empty %}
+        <p>Нет новостей для отображения.</p>
+      {% endfor %}
+    </div>
   </div>
 </div>
 {% endblock %}

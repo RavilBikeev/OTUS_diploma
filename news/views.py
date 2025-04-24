@@ -1,20 +1,33 @@
 from django.contrib.auth.decorators import login_required, user_passes_test
-from django.views.generic import DetailView
+from django.views.generic import DetailView, ListView
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
-from .models import News, Like
+from .models import News, Like, Tag
 from .forms import CommentForm, NewsForm
+
+
+class NewsListView(ListView):
+    model = News
+    template_name = "news/news_list.html"
+    context_object_name = "news_list"
+
+    def get_queryset(self):
+        queryset = News.objects.all().order_by("-created_at")
+        tag_id = self.request.GET.get("tag")
+        if tag_id:
+            queryset = queryset.filter(tags__id=tag_id)
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["tags"] = Tag.objects.all()
+        context["current_tag_id"] = self.request.GET.get("tag")
+        return context
 
 
 def is_admin(user):
     return hasattr(user, "employee") and user.employee.is_admin
-
-
-@login_required
-def news_list(request):
-    news_items = News.objects.all().order_by("-created_at")
-    return render(request, "news/news_list.html", {"news_items": news_items})
 
 
 @login_required
@@ -62,13 +75,6 @@ class NewsDetailView(DetailView):
     template_name = "news/news_detail.html"
     context_object_name = "news"
 
-    def get_queryset(self):
-        queryset = News.objects.all().order_by("-created_at")
-        tag_id = self.request.GET.get("tag")
-        if tag_id:
-            queryset = queryset.filter(tags__id=tag_id)
-        return queryset
-
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["form"] = CommentForm()
@@ -78,8 +84,6 @@ class NewsDetailView(DetailView):
         context["liked_user_ids"] = set(
             self.object.likes.values_list("user_id", flat=True)
         )
-        context["tags"] = Tag.objects.all()
-        context["current_tag_id"] = self.request.GET.get("tag")
         return context
 
     def post(self, request, *args, **kwargs):
