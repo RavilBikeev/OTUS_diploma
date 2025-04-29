@@ -4,20 +4,35 @@
 
   <!-- Фильтр категорий -->
   <div class="md:col-span-1">
-    <div class="bg-white rounded-2xl shadow p-4">
-      <h2 class="text-lg font-semibold mb-4">Категории</h2>
-      <ul class="space-y-2">
-        <li>
-          <a href="{% url 'documents:list' %}" class="text-blue-600 hover:underline {% if not selected_category %}font-bold{% endif %}">Все</a>
-        </li>
-        {% for code, name in categories %}
+    <div class="bg-white rounded-2xl shadow p-4 space-y-6">
+      <!-- Поиск -->
+      <form method="get" action="" class="space-y-2">
+        {% if selected_category %}
+          <input type="hidden" name="category" value="{{ selected_category }}">
+        {% endif %}
+        <label for="search" class="block text-sm font-medium text-gray-700">Поиск</label>
+        <input type="text" name="q" id="search" placeholder="Поиск документа по имени" value="{{ query }}"
+               class="border border-gray-300 rounded px-4 py-2 w-full" />
+        <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded w-full hover:bg-blue-700 transition">
+          Найти
+        </button>
+      </form>
+
+      <div>
+        <h2 class="text-lg font-semibold mb-4">Категории</h2>
+        <ul class="space-y-2">
           <li>
-            <a href="?category={{ code }}" class="text-blue-600 hover:underline {% if selected_category == code %}font-bold{% endif %}">
-              {{ name }}
-            </a>
+            <a href="{% url 'documents:list' %}" class="text-blue-600 hover:underline {% if not selected_category %}font-bold{% endif %}">Все</a>
           </li>
-        {% endfor %}
-      </ul>
+          {% for code, name in categories %}
+            <li>
+              <a href="?category={{ code }}" class="text-blue-600 hover:underline {% if selected_category == code %}font-bold{% endif %}">
+                {{ name }}
+              </a>
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
     </div>
   </div>
 
