@@ -1,24 +1,69 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="container mx-auto px-4 py-8">
-  <h1 class="text-3xl font-bold text-gray-800 mb-6">FAQ — Часто задаваемые вопросы</h1>
+<div class="container mx-auto px-4 py-8 grid grid-cols-1 md:grid-cols-4 gap-6">
 
-  <div class="space-y-4">
-    {% for faq in faqs %}
-      <div x-data="{ open: false }" class="bg-white p-6 rounded-2xl shadow transition">
-        <button @click="open = !open" class="w-full text-left text-xl font-semibold text-gray-800 flex justify-between items-center">
-          {{ faq.question }}
-          <svg :class="{'rotate-180': open}" class="w-5 h-5 transform transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-          </svg>
+  <!-- Фильтр категорий + Поиск -->
+  <div class="md:col-span-1">
+    <div class="bg-white rounded-2xl shadow p-4 space-y-6">
+      <!-- Поиск -->
+      <form method="get" action="" class="space-y-2">
+        {% if selected_category %}
+          <input type="hidden" name="category" value="{{ selected_category }}">
+        {% endif %}
+        <label for="search" class="block text-sm font-medium text-gray-700">Поиск</label>
+        <input type="text" name="q" id="search" placeholder="Поиск по вопросам..." value="{{ query }}"
+               class="border border-gray-300 rounded px-4 py-2 w-full" />
+        <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded w-full hover:bg-blue-700 transition">
+          Найти
         </button>
-        <div x-show="open" x-transition class="mt-2 text-gray-600">
-          {{ faq.answer }}
-        </div>
+      </form>
+
+      <!-- Категории -->
+      <div>
+        <h2 class="text-lg font-semibold mb-4">Категории</h2>
+        <ul class="space-y-2">
+          <li>
+            <a href="{% url 'faq:list' %}" class="{% if not selected_category %}font-bold{% endif %} text-blue-600 hover:underline">Все</a>
+          </li>
+          {% for key, name in categories %}
+            <li>
+              <a href="?category={{ key }}" class="{% if selected_category == key %}font-bold{% endif %} text-blue-600 hover:underline">
+                {{ name }}
+              </a>
+            </li>
+          {% endfor %}
+        </ul>
       </div>
-    {% empty %}
-      <p class="text-gray-500">Пока нет вопросов и ответов.</p>
-    {% endfor %}
+    </div>
+  </div>
+
+  <!-- Контент: заголовок, поиск и список -->
+  <div class="md:col-span-3 space-y-6">
+    <div class="flex flex-col space-y-4 md:space-y-0 md:flex-row md:items-center md:justify-between">
+      <h1 class="text-3xl font-bold text-gray-800">FAQ — Часто задаваемые вопросы</h1>
+    </div>
+
+    <!-- Список вопросов -->
+    <div class="space-y-4">
+      {% for faq in faqs %}
+        <div x-data="{ open: false }" class="bg-white p-6 rounded-2xl shadow">
+          <button @click="open = !open"
+                  class="w-full text-left text-xl font-semibold text-gray-800 flex justify-between items-center">
+            {{ faq.question }}
+            <svg :class="{ 'rotate-180': open }" class="w-5 h-5 transform transition-transform duration-300"
+                 fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M19 9l-7 7-7-7" />
+            </svg>
+          </button>
+          <div x-show="open" x-collapse class="mt-4 text-gray-700">
+            {{ faq.answer }}
+          </div>
+        </div>
+      {% empty %}
+        <p class="text-gray-500">Пока нет вопросов и ответов.</p>
+      {% endfor %}
+    </div>
   </div>
 
 </div>

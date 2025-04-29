@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from .models import FAQ, FAQ_CATEGORIES
+from django.db.models import Q
 
 
 def faq_list(request):
@@ -10,15 +11,17 @@ def faq_list(request):
     if category:
         faqs = faqs.filter(category=category)
     if query:
-        faqs = faqs.filter(question__icontains=query)
+        faqs = faqs.filter(Q(question__icontains=query) | Q(answer__icontains=query))
+
+    categories = FAQ_CATEGORIES
 
     return render(
         request,
         "faq/faq_list.html",
         {
             "faqs": faqs,
-            "categories": FAQ_CATEGORIES,
+            "query": query,
+            "categories": categories,
             "selected_category": category,
-            "search_query": query,
         },
     )
