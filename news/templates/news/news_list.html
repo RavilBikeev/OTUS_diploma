@@ -56,8 +56,9 @@
             <h2 class="text-xl font-semibold text-blue-700 hover:underline">
               <a href="{% url 'news:detail' news.pk %}">{{ news.title }}</a>
             </h2>
-            <p class="text-sm text-gray-500 mt-1">{{ news.created_at|date:"d.m.Y H:i" }} — {{ news.author.employee.department.name|default:"" }}</p>
+            <p class="text-sm text-gray-500 mt-1">{{ news.created_at|date:"d.m.Y H:i" }} — {{ news.author|default:"" }}</p>
             <p class="mt-3 text-gray-800">{{ news.content|truncatewords:20 }}</p>
+
             <!-- Теги -->
             <div class="mt-4 flex flex-wrap gap-2">
               {% for tag in news.tags.all %}
@@ -65,6 +66,7 @@
               {% endfor %}
             </div>
           </div>
+
           <div class="mt-4 flex justify-between items-center text-sm text-gray-600">
             <!-- Лайки -->
             <form method="post" action="{% url 'news:like_news' news.pk %}" class="like-form flex items-center gap-1" data-news-id="{{ news.pk }}">
