@@ -18,6 +18,7 @@ urlpatterns = [
     path("login/", custom_login_view, name="login"),
     path("select2/", include("django_select2.urls")),
     path("employees/", include("core.urls")),
+    path("faq/", include("faq.urls", namespace="faq")),
 ]
 
 if settings.DEBUG:

@@ -5,5 +5,14 @@ from .models import Document
 
 @login_required
 def document_list(request):
+    selected_category = request.GET.get("category")
     documents = Document.objects.all()
-    return render(request, "documents/document_list.html", {"documents": documents})
+
+    if selected_category:
+        documents = documents.filter(category=selected_category)
+
+    context = {
+        "documents": documents,
+        "selected_category": selected_category,
+    }
+    return render(request, "documents/document_list.html", context)

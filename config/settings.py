@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     "news",
     "documents",
     "widget_tweaks",
+    "faq",
 ]
 
 MIDDLEWARE = [
