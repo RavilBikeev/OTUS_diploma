@@ -1,4 +1,5 @@
 from django.contrib.auth.decorators import login_required, user_passes_test
+from django.db.models import Q
 from django.views.generic import DetailView, ListView
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse
@@ -15,14 +16,20 @@ class NewsListView(ListView):
     def get_queryset(self):
         queryset = News.objects.all().order_by("-created_at")
         tag_id = self.request.GET.get("tag")
+        query = self.request.GET.get("q")
         if tag_id:
             queryset = queryset.filter(tags__id=tag_id)
+        if query:
+            queryset = queryset.filter(
+                Q(title__icontains=query) | Q(content__icontains=query)
+            )
         return queryset
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["tags"] = Tag.objects.all()
         context["current_tag_id"] = self.request.GET.get("tag")
+        context["query"] = self.request.GET.get("q", "")
         return context
 
 
