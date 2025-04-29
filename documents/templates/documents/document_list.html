@@ -10,7 +10,7 @@
         <li>
           <a href="{% url 'documents:list' %}" class="text-blue-600 hover:underline {% if not selected_category %}font-bold{% endif %}">Все</a>
         </li>
-        {% for code, name in documents.model.DOCUMENT_CATEGORIES %}
+        {% for code, name in categories %}
           <li>
             <a href="?category={{ code }}" class="text-blue-600 hover:underline {% if selected_category == code %}font-bold{% endif %}">
               {{ name }}
